@@ -4,7 +4,7 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-LIMIT=50
+LIMIT=500
 
 ################################################################################
 # Help                                                                         #
@@ -94,3 +94,20 @@ while getopts ":hr:l:" option; do
             exit;;
     esac
 done
+
+################################################################################
+#future Features
+################################################################################
+#-->get all repos count
+#add:   Thu Sep 30 17:29:27 HKT 2021
+#state:
+#finished:
+#-->interactive select to clone
+#add:   Thu Sep 30 17:30:09 HKT 2021
+#state:
+#finished:
+#-->
+#
+#
+#
+
