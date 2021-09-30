@@ -1,4 +1,11 @@
 #!/bin/bash
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+LIMIT=50
+
 ################################################################################
 # Help                                                                         #
 ################################################################################
@@ -32,11 +39,16 @@ orgName=""
 ListRepos()
 {
      echo "********** all repos in $orgName:"
-     repos=$(gh repo list $orgName | grep $orgName | cut -f 1 | cut -d "/" -f 2)
+     repos=$(gh repo list $orgName -L $LIMIT | grep $orgName | cut -f 1 | cut -d "/" -f 2)
      idx=1
      while IFS= read -r line
      do
-         echo "-->"$idx:$line
+         if [[ -d $line ]] || [[ -d $line@$orgName ]]
+         then
+             echo -e "${GREEN}==>${NC}"$idx:$line
+         else
+             echo -e "${RED}-->${NC}"$idx:$line
+         fi
          ((idx = idx + 1))
      done <<<"$repos"
 }
@@ -46,13 +58,18 @@ ListRepos()
 CloneRepos()
 {
      echo "********** all repos in $orgName:"
-     repos=$(gh repo list $orgName | grep $orgName | cut -f 1 | cut -d "/" -f 2)
+     repos=$(gh repo list $orgName -L $LIMIT | grep $orgName | cut -f 1 | cut -d "/" -f 2)
      idx=1
      while IFS= read -r line
      do
-         echo "-->"$idx:$line
+         if [[ -d $line ]] || [[ -d $line@$orgName ]]
+         then
+             echo -e "${GREEN}==>${NC}"$idx:$line
+         else
+             echo -e "${RED}-->${NC}"$idx:$line
+             git clone https://github.com/$orgName/$line.git
+         fi
          ((idx = idx + 1))
-         git clone https://github.com/$orgName/$line.git
      done <<<"$repos"
 }
 ################################################################################
