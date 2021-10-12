@@ -39,7 +39,7 @@ orgName=""
 ListRepos()
 {
      echo "********** all repos in $orgName:"
-     repos=$(gh repo list $orgName -L $LIMIT | grep $orgName | cut -f 1 | cut -d "/" -f 2)
+     repos=$(gh repo list $orgName -L $LIMIT | cut -f 1 | cut -d "/" -f 2)
      idx=1
      while IFS= read -r line
      do
@@ -58,7 +58,7 @@ ListRepos()
 CloneRepos()
 {
      echo "********** all repos in $orgName:"
-     repos=$(gh repo list $orgName -L $LIMIT | grep $orgName | cut -f 1 | cut -d "/" -f 2)
+     repos=$(gh repo list $orgName -L $LIMIT | cut -f 1 | cut -d "/" -f 2)
      idx=1
      while IFS= read -r line
      do
