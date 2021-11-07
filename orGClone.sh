@@ -14,7 +14,7 @@ CheckEnv()
     # Check Requirements
     if ! command -v gh &> /dev/null
     then
-        echo "github-cli not exist"
+        echo "github-cli not exist,please install github-cli first."
         echo "https://cli.github.com/"
         exit 1
     fi
