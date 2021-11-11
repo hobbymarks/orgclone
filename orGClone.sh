@@ -27,10 +27,11 @@ Help()
     # Display Help
     echo "git clone all the repos of an organization."
     echo
-    echo "Syntax: orgClone.sh [-l NAME | -r NAME |h]"
+    echo "Syntax: orgClone.sh [ -l NAME | -r NAME | -d DirPath | -h ]"
     echo "options:"
     echo "l     List all repos in the NAME organization one bye one."
     echo "r     Run git clone repo in the NAME organization one bye one."
+    echo "d     Set Target Directory Path ,default is current directory." 
     echo "h     Print this Help."
     #echo "v     Verbose mode."
     #echo "V     Print software version and exit."
@@ -45,57 +46,67 @@ Help()
 
 # Orgnization Name
 orgName=""
+# Target Directory Path
+targetDir="."
 
 ################################################################################
 # List all repos in the org
 ################################################################################
 ListRepos()
 {
-     echo "********** all repos in $orgName:"
-     repos=$(gh repo list $orgName -L $LIMIT | cut -f 1 | cut -d "/" -f 2)
-     idx=1
-     while IFS= read -r line
-     do
-         if [[ -d $line ]] || [[ -d $line@$orgName ]]
-         then
-             echo -e "${GREEN}==>${NC}"$idx:$line
-         else
-             echo -e "${RED}-->${NC}"$idx:$line
-         fi
-         ((idx = idx + 1))
-     done <<<"$repos"
+    pushd $PWD &> /dev/null
+    cd $targetDir
+    echo "********** all repos in $orgName:"
+    repos=$(gh repo list $orgName -L $LIMIT | cut -f 1 | cut -d "/" -f 2)
+    idx=1
+    while IFS= read -r line
+    do
+        if [[ -d $line ]] || [[ -d $line@$orgName ]]
+        then
+            echo -e "${GREEN}==>${NC}"$idx:$line
+        else
+            echo -e "${RED}-->${NC}"$idx:$line
+        fi
+        ((idx = idx + 1))
+    done <<<"$repos"
+    popd &> /dev/null
 }
 ################################################################################
 # Git clone all repos in the org
 ################################################################################
 CloneRepos()
 {
-     echo "********** all repos in $orgName:"
-     repos=$(gh repo list $orgName -L $LIMIT | cut -f 1 | cut -d "/" -f 2)
-     idx=1
-     while IFS= read -r line
-     do
-         if [[ -d $line ]] || [[ -d $line@$orgName ]]
-         then
-             echo -e "${GREEN}==>${NC}"$idx:$line
-         else
-             echo -e "${RED}-->${NC}"$idx:$line
-             git clone https://github.com/$orgName/$line.git
-         fi
-         ((idx = idx + 1))
-     done <<<"$repos"
+    pushd $PWD &> /dev/null
+    cd $targetDir
+    echo "********** all repos in $orgName:"
+    repos=$(gh repo list $orgName -L $LIMIT | cut -f 1 | cut -d "/" -f 2)
+    idx=1
+    while IFS= read -r line
+    do
+        if [[ -d $line ]] || [[ -d $line@$orgName ]]
+        then
+            echo -e "${GREEN}==>${NC}"$idx:$line
+        else
+            echo -e "${RED}-->${NC}"$idx:$line
+            git clone https://github.com/$orgName/$line.git
+        fi
+        ((idx = idx + 1))
+    done <<<"$repos"
+    popd &> /dev/null
 }
 ################################################################################
 # Process the input options.                                                   #
 ################################################################################
 # Check Environment
-CheckEnv()
+CheckEnv
 # Get the options
-while getopts ":hr:l:" option; do
+while getopts ":hd:r:l:" option; do
     case $option in
         h) # Display Help
             Help
             exit;;
+        d) # Target Directory
+            targetDir=$OPTARG;;
         r) # Git clone all repos in the org
             orgName=$OPTARG
             CloneRepos
